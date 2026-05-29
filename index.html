@@ -1355,9 +1355,44 @@
       const m = document.getElementById('cMessage').value.trim();
       if (!n || !e || !m) { showToast('Please fill in all required fields.'); return; }
       const subject = document.getElementById('cSubject').value.trim() || 'Portfolio Inquiry';
-      const body = `Name: ${n}\nEmail: ${e}\n\n${m}`;
-      window.location.href = `mailto:awaissaeed054@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      showToast('Opening email client…');
+      
+      if (typeof emailjs === 'undefined') {
+        showToast('EmailJS not loaded. Please refresh the page.');
+        return;
+      }
+
+      // Check if credentials are configured
+      if (EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY_HERE') {
+        showToast('❌ EmailJS not configured. Ask developer to set up credentials.');
+        console.error('Missing EmailJS credentials in code');
+        return;
+      }
+
+      // Send email using EmailJS SDK v4
+      // Field names MUST match template variables: {{from_name}}, {{from_email}}, {{subject}}, {{message}}
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        from_name: n,
+        from_email: e,
+        subject: subject,
+        message: m
+      }).then((response) => {
+        console.log('✓ Email sent successfully!', response);
+        showToast('✓ Message sent! I\'ll get back to you soon.');
+        // Clear form
+        document.getElementById('cName').value = '';
+        document.getElementById('cEmail').value = '';
+        document.getElementById('cSubject').value = '';
+        document.getElementById('cMessage').value = '';
+      }).catch((err) => {
+        console.error('❌ EmailJS send failed:', err);
+        if (err.status === 418) {
+          showToast('❌ Invalid EmailJS credentials. Check console.');
+        } else if (err.status === 400) {
+          showToast('❌ Invalid template fields. Check EmailJS template.'); 
+        } else {
+          showToast('❌ Failed to send message. Check console.');
+        }
+      });
     }
 
     const sections = document.querySelectorAll('section[id]');
@@ -1370,6 +1405,34 @@
         if (a.getAttribute('href') === '#' + current) a.style.color = 'var(--accent-3)';
       });
     }, { passive: true });
+  </script>
+  <!-- EmailJS SDK v4 - using ES module for better compatibility -->
+  <script type="importmap">
+    {
+      "imports": {
+        "@emailjs/browser": "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/+esm"
+      }
+    }
+  </script>
+  <script type="module">
+    import emailjs from '@emailjs/browser';
+    
+    // EmailJS config
+    const EMAILJS_PUBLIC_KEY = 'tNZjvWDHd9rtD87N5';
+    const EMAILJS_SERVICE_ID = 'service_8grnd2w';
+    const EMAILJS_TEMPLATE_ID = 'template_vfhqqn6';
+    
+    // Make EmailJS variables globally available for non-module code
+    window.emailjs = emailjs;
+    window.EMAILJS_PUBLIC_KEY = EMAILJS_PUBLIC_KEY;
+    window.EMAILJS_SERVICE_ID = EMAILJS_SERVICE_ID;
+    window.EMAILJS_TEMPLATE_ID = EMAILJS_TEMPLATE_ID;
+    
+    // Initialize when module loads
+    if (EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY_HERE') {
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+      console.log('✓ EmailJS initialized successfully');
+    }
   </script>
 </body>
 </html>
