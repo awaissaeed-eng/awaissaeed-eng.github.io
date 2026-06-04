@@ -447,7 +447,7 @@
       display: grid; grid-template-columns: repeat(2, 1fr);
       gap: 1.5rem; margin-top: 2.5rem;
     }
-    .project-card { padding: 0; overflow: hidden; }
+    .project-card { position: relative; padding: 0; overflow: hidden; cursor: pointer; }
 
     .project-thumb {
       width: 100%; height: 180px;
@@ -464,7 +464,7 @@
     .project-thumb-3 { background: linear-gradient(135deg, #2a0d1a, #4a1a2d); }
     .project-thumb-4 { background: linear-gradient(135deg, #1a0d2a, #2d1a4a); }
 
-    .project-body { padding: 1.4rem; }
+    .project-body { position: relative; padding: 1.4rem 1.4rem 3.2rem; }
     .project-title { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; }
     .project-desc { color: var(--text-muted); font-size: 0.88rem; margin-top: 0.5rem; font-weight: 300; line-height: 1.7; }
 
@@ -475,15 +475,147 @@
       background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.25); color: var(--accent-3);
     }
 
+    .project-card-footer {
+      position: absolute; right: 1.4rem; bottom: 1.4rem;
+    }
+    .project-card-link {
+      font-size: 0.88rem; font-weight: 600; color: var(--accent-3);
+      text-decoration: none; background: transparent; border: none;
+      padding: 0; display: inline-flex; align-items: center; transition: transform 0.25s ease;
+      cursor: pointer;
+    }
+    .project-card-link:hover { transform: translateX(4px); }
+
     .project-links { display: flex; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap; }
     .project-link {
-      display: flex; align-items: center; gap: 0.4rem;
+      display: inline-flex; align-items: center; gap: 0.4rem;
       font-size: 0.8rem; font-weight: 600; color: var(--accent-3);
       padding: 0.38rem 0.85rem; border-radius: 8px;
       background: rgba(37,99,235,0.1); border: 1px solid rgba(37,99,235,0.2);
       transition: all 0.25s;
+      cursor: pointer;
+      text-decoration: none;
     }
     .project-link:hover { background: var(--accent); color: #fff; }
+
+    .project-details-panel {
+      margin: calc(var(--nav-h) + 1.5rem) auto 4rem;
+      padding: 3rem 2.5rem;
+      max-width: 1200px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+      position: relative;
+      scroll-margin-top: calc(var(--nav-h) + 1.5rem);
+    }
+    .project-detail-header {
+      position: relative;
+      display: block;
+      margin-bottom: 1.75rem;
+      padding-right: 10rem;
+    }
+    .project-detail-header a {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: inline-flex;
+      align-items: center;
+      color: var(--accent-3);
+      font-weight: 600;
+      transition: color var(--transition);
+    }
+    .project-detail-header a:hover { color: var(--white); }
+    @media (max-width: 768px) {
+      .project-detail-header {
+        padding-right: 0;
+      }
+      .project-detail-header a {
+        position: static;
+        margin-top: 1rem;
+      }
+    }
+    .project-detail-top {
+      display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: space-between;
+      align-items: flex-start;
+    }
+    .project-detail-badges { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1rem 0; }
+    .detail-badge {
+      padding: 0.45rem 0.85rem; border-radius: 999px;
+      background: rgba(37,99,235,0.12); color: var(--accent-3);
+      font-size: 0.72rem; letter-spacing: 0.04em; font-weight: 700;
+    }
+    .project-detail-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.75rem; }
+    .project-detail-card {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px; padding: 1.6rem; min-height: 260px;
+    }
+    .project-detail-card h4 { margin-top: 0; font-size: 0.95rem; letter-spacing: 0.02em; }
+    .project-detail-card ul { margin: 1rem 0 0; padding-left: 1.15rem; color: var(--text-muted); line-height: 1.75; }
+    .project-detail-card li { margin-bottom: 0.65rem; }
+    .project-stack-list {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem;
+    }
+    .project-stack-chip {
+      padding: 0.35rem 0.75rem; border-radius: 999px;
+      border: 1px solid rgba(37,99,235,0.2); background: rgba(37,99,235,0.08);
+      color: var(--accent-3); font-size: 0.75rem; font-weight: 600;
+    }
+    .project-gallery {
+      margin-top: 2rem;
+    }
+    .project-gallery-main {
+      width: 100%; min-height: 420px; border-radius: 24px;
+      overflow: hidden; position: relative; background: #08122a;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .project-gallery-main::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 100%);
+      background-size: 200% 100%;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .project-gallery-main.skeleton-loading::before {
+      opacity: 1;
+      animation: shimmer 1.4s linear infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: -150% 0; }
+      100% { background-position: 150% 0; }
+    }
+    .project-gallery-main img {
+      width: 100%; height: 100%; object-fit: cover;
+      border-radius: 24px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      display: block;
+    }
+    .project-gallery-main img.loaded {
+      opacity: 1;
+    }
+    .gallery-thumbs {
+      display: flex; gap: 0.75rem; margin-top: 1rem; overflow-x: auto;
+      padding-bottom: 0.25rem;
+    }
+    .gallery-thumb {
+      width: 140px; height: 90px; min-width: 140px;
+      border-radius: 16px; overflow: hidden; border: 2px solid transparent;
+      cursor: pointer; flex-shrink: 0;
+      background: #08122a;
+    }
+    .gallery-thumb img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.25s ease;
+    }
+    .gallery-thumb:hover img { transform: scale(1.03); }
+    .gallery-thumb.active { border-color: var(--accent-3); }
+    .project-detail-hidden { display: none; }
+    .project-detail-description { color: var(--text-muted); margin-top: 1rem; line-height: 1.8; }
+    .page-hidden { display: none !important; }
 
     .live-dot {
       display: inline-flex; align-items: center; gap: 0.4rem;
@@ -859,7 +991,7 @@
         <div class="hero-card-wrap">
           
           <div class="card hero-info-card">
-            <div class="hero-avatar-box"><img src="media/awais.png" alt="Awais Saeed"></div>
+            <div class="hero-avatar-box"><img src="media/awais.png" alt="Awais Saeed" decoding="async"></div>
             <h3>Awais Saeed</h3>
             <p>Full-Stack Developer</p>
           </div>
@@ -1076,60 +1208,106 @@
         <p class="section-desc">Real systems. Real clients. Real impact.</p>
       </div>
       <div class="projects-grid">
-        <div class="card project-card fade-up">
+        <div class="card project-card fade-up" onclick="showProjectDetails('seya')">
           <div class="project-thumb project-thumb-1">🛍️</div>
           <div class="project-body">
             <div class="live-dot">LIVE</div>
             <h3 class="project-title">SEYA Fashion E-commerce</h3>
             <p class="project-desc">Full-featured MERN stack fashion store with admin panel, product catalog, cart, authentication, and order management. Live in production.</p>
             <div class="project-stack"><span class="stack-tag">React.js</span><span class="stack-tag">Node.js</span><span class="stack-tag">Express</span><span class="stack-tag">MongoDB</span><span class="stack-tag">JWT</span></div>
-            <div class="project-links">
-              <a href="https://seyafashion.com.pk" target="_blank" class="project-link"><i class="fas fa-external-link-alt"></i> Live</a>
-              <a href="https://github.com/awaissaeed-eng" target="_blank" class="project-link"><i class="fab fa-github"></i> Code</a>
+            <div class="project-card-footer">
+              <a href="#" class="project-card-link" onclick="showProjectDetails('seya'); return false;">View Details →</a>
             </div>
           </div>
         </div>
-        <div class="card project-card fade-up" style="transition-delay:0.1s">
+        <div class="card project-card fade-up" style="transition-delay:0.1s" onclick="showProjectDetails('spicehut')">
           <div class="project-thumb project-thumb-2">🍛</div>
           <div class="project-body">
             <div class="live-dot">LIVE</div>
             <h3 class="project-title">Spice Hut Restaurant System</h3>
             <p class="project-desc">Multi-branch restaurant platform with real-time ordering, kitchen management, and delivery tracking. Built for a Canadian client.</p>
             <div class="project-stack"><span class="stack-tag">MERN</span><span class="stack-tag">REST API</span><span class="stack-tag">MongoDB</span><span class="stack-tag">React.js</span></div>
-            <div class="project-links">
-              <a href="https://spicehutcanada.com" target="_blank" class="project-link"><i class="fas fa-external-link-alt"></i> Live</a>
-              <a href="https://github.com/awaissaeed-eng" target="_blank" class="project-link"><i class="fab fa-github"></i> Code</a>
+            <div class="project-card-footer">
+              <a href="#" class="project-card-link" onclick="showProjectDetails('spicehut'); return false;">View Details →</a>
             </div>
           </div>
         </div>
-        <div class="card project-card fade-up" style="transition-delay:0.15s">
+        <div class="card project-card fade-up" style="transition-delay:0.15s" onclick="showProjectDetails('inventory')">
           <div class="project-thumb project-thumb-3">🏛️</div>
           <div class="project-body">
             <div class="live-dot" style="color:#f59e0b;background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3)">ENTERPRISE</div>
             <h3 class="project-title">IT Asset Control System</h3>
             <p class="project-desc">Government-deployed enterprise IT asset management system for NEPRA. Role-based access, audit trails, and reporting dashboard.</p>
             <div class="project-stack"><span class="stack-tag">Python Flask</span><span class="stack-tag">MySQL</span><span class="stack-tag">JavaScript</span><span class="stack-tag">Bootstrap</span></div>
-            <div class="project-links">
-              <a href="#" class="project-link" onclick="showToast('Private enterprise system'); return false;"><i class="fas fa-lock"></i> Private</a>
-              <a href="https://github.com/awaissaeed-eng" target="_blank" class="project-link"><i class="fab fa-github"></i> Code</a>
+            <div class="project-card-footer">
+              <a href="#" class="project-card-link" onclick="showProjectDetails('inventory'); return false;">View Details →</a>
             </div>
           </div>
         </div>
-        <div class="card project-card fade-up" style="transition-delay:0.2s">
+        <div class="card project-card fade-up" style="transition-delay:0.2s" onclick="showProjectDetails('voicegame')">
           <div class="project-thumb project-thumb-4">🎮</div>
           <div class="project-body">
             <div class="live-dot" style="color:#a78bfa;background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.3)">FYP</div>
             <h3 class="project-title">Voice Recognition Gaming System</h3>
             <p class="project-desc">Final Year Project — an AI-powered voice-controlled gaming system using real-time speech recognition and command mapping.</p>
             <div class="project-stack"><span class="stack-tag">Python</span><span class="stack-tag">Speech Recognition</span><span class="stack-tag">AI/ML</span><span class="stack-tag">Flask</span></div>
-            <div class="project-links">
-              <a href="https://github.com/awaissaeed-eng" target="_blank" class="project-link"><i class="fab fa-github"></i> GitHub</a>
+            <div class="project-card-footer">
+              <a href="#" class="project-card-link" onclick="showProjectDetails('voicegame'); return false;">View Details →</a>
             </div>
           </div>
         </div>
       </div>
     </div>
   </section>
+
+  <div class="project-details-panel project-detail-hidden" id="projectDetailsPanel">
+    <div class="project-detail-header">
+      <div>
+        <div class="section-label" style="margin-bottom:0.75rem">Project Details</div>
+        <h2 class="section-title" id="detailTitle"></h2>
+      </div>
+      <a href="#projects" onclick="hideProjectDetails(); return false;">← Back to Projects</a>
+    </div>
+    <div class="project-detail-top">
+      <div>
+        <p class="project-detail-description" id="detailSubtitle"></p>
+        <div class="project-detail-badges" id="detailBadges"></div>
+      </div>
+      <div style="min-width:220px; display:flex; flex-wrap:wrap; gap:0.75rem; justify-content:flex-end; align-items:center;">
+        <span class="detail-badge" id="detailStatus"></span>
+        <a id="detailLiveLink" href="#" target="_blank" class="project-link" style="white-space:nowrap;">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-detail-columns">
+      <div class="project-detail-card">
+        <h4>Overview</h4>
+        <p class="project-detail-description" id="detailOverview"></p>
+      </div>
+      <div class="project-detail-card">
+        <h4>Tech Stack</h4>
+        <div class="project-stack-list" id="detailStack"></div>
+      </div>
+    </div>
+
+    <div class="project-detail-columns" style="margin-top:2rem;">
+      <div class="project-detail-card">
+        <h4>Customer Features</h4>
+        <ul id="detailCustomerFeatures"></ul>
+      </div>
+      <div class="project-detail-card">
+        <h4>Admin / Backend Features</h4>
+        <ul id="detailAdminFeatures"></ul>
+      </div>
+    </div>
+
+    <div class="project-gallery">
+      <div class="project-gallery-main skeleton-loading" id="detailMainImage">
+        <img src="" alt="Project screenshot" id="detailMainImg" decoding="async" />
+      </div>
+      <div class="gallery-thumbs" id="detailThumbs"></div>
+    </div>
+  </div>
 
   <div class="section-divider"></div>
 
@@ -1349,6 +1527,235 @@
       setTimeout(() => t.classList.remove('show'), 3000);
     }
 
+    const projectDetails = {
+      seya: {
+        title: '🛍️ Seya Fashion',
+        subtitle: 'Full-Stack E-Commerce Platform for Women\'s Clothing',
+        status: 'LIVE IN PRODUCTION',
+        liveLink: 'https://seyafashion.com.pk',
+        overview: 'Complete e-commerce platform built from scratch featuring customer shopping experience, admin management, and integrated payment gateways. Designed for scalability and real-world business operations.',
+        badges: ['MERN Stack', 'Live Demo', 'Production'],
+        stack: ['React', 'Tailwind CSS', 'React Router', 'Node.js', 'Express', 'JWT', 'MongoDB', 'Cloudinary'],
+        customerFeatures: [
+          'Advanced product filtering & search',
+          'Custom size measurements',
+          'Real-time cart & stock validation',
+          'Multiple payment gateways',
+          'Order tracking & history',
+          'Automated email notifications',
+          'Fully responsive design'
+        ],
+        adminFeatures: [
+          'Analytics & insights dashboard',
+          'Product & category management',
+          'Order status tracking',
+          'User management',
+          'Image upload & optimization',
+          'Tax & settings configuration',
+          'Rich text content editor'
+        ],
+        images: [
+          'https://github.com/user-attachments/assets/4e33a47e-0864-427d-b9de-26f3409a07d7',
+          'https://github.com/user-attachments/assets/c2a5d034-2339-464d-895a-f7339aa8ddd8',
+          'https://github.com/user-attachments/assets/702ce8ab-cb04-44eb-8dd3-5559f70bde3a',
+          'https://github.com/user-attachments/assets/0f1ae341-565f-47a3-a19f-9c18aced442b',
+          'https://github.com/user-attachments/assets/fac993b8-d859-4b98-930f-5d5622f5dad5'
+        ]
+      },
+      spicehut: {
+        title: '🍛 Spice Hut Restaurant Platform',
+        subtitle: 'Full-stack restaurant ordering platform with branch management, delivery options, and loyalty rewards.',
+        status: 'LIVE',
+        liveLink: 'https://spicehutcanada.org',
+        overview: 'A full-stack restaurant ordering platform built with React, Node.js, Express, and MongoDB. Features online menu browsing, branch management, delivery/pickup options, and customer loyalty.',
+        badges: ['React', 'Tailwind', 'Node.js', 'MongoDB'],
+        stack: ['React', 'Axios', 'Tailwind CSS', 'Vite', 'Node.js', 'Express', 'MongoDB', 'JWT', 'Cloudinary'],
+        customerFeatures: [
+          'Browse menu by categories',
+          'Search menu items',
+          'Shopping cart with real-time updates',
+          'Email/SMS OTP authentication',
+          'Multiple delivery addresses',
+          'Loyalty points system',
+          'Order history tracking'
+        ],
+        adminFeatures: [
+          'Analytics dashboard',
+          'Order management workflow',
+          'Menu item & category management',
+          'Branch management',
+          'Customer management',
+          'Admin user management',
+          'Real-time order tracking'
+        ],
+        images: [
+          'https://via.placeholder.com/1200x700?text=Spice+Hut+Homepage',
+          'https://via.placeholder.com/1200x700?text=Spice+Hut+Menu',
+          'https://via.placeholder.com/1200x700?text=Spice+Hut+Cart',
+          'https://via.placeholder.com/1200x700?text=Spice+Hut+Orders'
+        ]
+      },
+      inventory: {
+        title: '🏢 IT Asset Management System',
+        subtitle: 'Modern responsive asset inventory platform built with React and Flask.',
+        status: 'PRIVATE / ENTERPRISE',
+        liveLink: '#',
+        overview: 'A modern responsive inventory management platform with asset tracking, assignments, repair workflows, and reporting. Built for desktop and mobile workflows using React, Flask, and MySQL.',
+        badges: ['React', 'Flask', 'MySQL', 'Tailwind'],
+        stack: ['React', 'Tailwind CSS', 'Python', 'Flask', 'MySQL', 'SQLAlchemy', 'REST API'],
+        customerFeatures: [
+          'Dynamic navigation with React Router',
+          'Organized asset categories and filters',
+          'Real-time assignment and tracking',
+          'Interactive dashboards with charts',
+          'Responsive mobile-first layout'
+        ],
+        adminFeatures: [
+          'Asset CRUD operations',
+          'Assignment tracking and vouchers',
+          'Repair workflow management',
+          'Return processing and buyback modes',
+          'Auction and report generation'
+        ],
+        images: [
+          'https://via.placeholder.com/1200x700?text=Inventory+Dashboard',
+          'https://via.placeholder.com/1200x700?text=Asset+List',
+          'https://via.placeholder.com/1200x700?text=Assignment+Details',
+          'https://via.placeholder.com/1200x700?text=Repair+Management'
+        ]
+      },
+      voicegame: {
+        title: '🎮 Voice Recognition Gaming System',
+        subtitle: 'Desktop voice-controlled gaming system with biometric authentication.',
+        status: 'FYP / DESKTOP',
+        liveLink: '#',
+        overview: 'A WPF desktop application for hands-free gaming powered by voice commands and biometric authentication. Includes a cyberpunk UI and offline voice recognition using VOSK.',
+        badges: ['WPF', 'C#', 'Python', 'VOSK'],
+        stack: ['WPF', '.NET Framework 4.8', 'C#', 'Python', 'VOSK', 'SQL Server'],
+        customerFeatures: [
+          'Voice-controlled navigation and gameplay',
+          'Voice biometric login',
+          'Game library with custom mappings',
+          'Activity statistics and usage tracking',
+          'Offline ASR with low latency'
+        ],
+        adminFeatures: [
+          'Voice enrollment and profile management',
+          'Command mapping for custom games',
+          'Game launch control and voice handoff',
+          'Local backend integration with Python',
+          'Offline-first architecture'
+        ],
+        images: [
+          'https://via.placeholder.com/1200x700?text=Voice+Gaming+Dashboard',
+          'https://via.placeholder.com/1200x700?text=Voice+Login',
+          'https://via.placeholder.com/1200x700?text=Voice+Commands',
+          'https://via.placeholder.com/1200x700?text=Game+Library'
+        ]
+      }
+    };
+
+    function preloadProjectImage(url) {
+      if (!url) return;
+      const existing = document.getElementById('preload-detail-image');
+      if (existing) {
+        existing.href = url;
+        return;
+      }
+      const link = document.createElement('link');
+      link.id = 'preload-detail-image';
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = url;
+      document.head.appendChild(link);
+    }
+
+    function showProjectDetails(key) {
+      const data = projectDetails[key];
+      if (!data) return;
+
+      document.querySelectorAll('section, footer, .section-divider').forEach(el => el.classList.add('page-hidden'));
+      const panel = document.getElementById('projectDetailsPanel');
+      panel.classList.remove('page-hidden');
+      panel.classList.remove('project-detail-hidden');
+
+      document.getElementById('detailTitle').textContent = data.title;
+      document.getElementById('detailSubtitle').textContent = data.subtitle;
+      document.getElementById('detailOverview').textContent = data.overview;
+      document.getElementById('detailStatus').textContent = data.status;
+      const liveLink = document.getElementById('detailLiveLink');
+      if (data.liveLink && data.liveLink !== '#') {
+        liveLink.href = data.liveLink;
+        liveLink.style.display = 'inline-flex';
+      } else {
+        liveLink.style.display = 'none';
+      }
+
+      const badges = document.getElementById('detailBadges');
+      badges.innerHTML = data.badges.map(b => `<span class="detail-badge">${b}</span>`).join('');
+
+      const stack = document.getElementById('detailStack');
+      stack.innerHTML = data.stack.map(item => `<span class="project-stack-chip">${item}</span>`).join('');
+
+      const customerFeatures = document.getElementById('detailCustomerFeatures');
+      customerFeatures.innerHTML = data.customerFeatures.map(feature => `<li>${feature}</li>`).join('');
+
+      const adminFeatures = document.getElementById('detailAdminFeatures');
+      adminFeatures.innerHTML = data.adminFeatures.map(feature => `<li>${feature}</li>`).join('');
+
+      const mainImg = document.getElementById('detailMainImg');
+      const galleryMain = document.getElementById('detailMainImage');
+      galleryMain.classList.add('skeleton-loading');
+      mainImg.classList.remove('loaded');
+      mainImg.onload = () => {
+        galleryMain.classList.remove('skeleton-loading');
+        mainImg.classList.add('loaded');
+      };
+      preloadProjectImage(data.images[0]);
+      mainImg.src = '';
+      mainImg.src = data.images[0];
+      mainImg.alt = `${data.title} screenshot`;
+
+      const thumbs = document.getElementById('detailThumbs');
+      thumbs.innerHTML = data.images.map((src, index) => `
+        <div class="gallery-thumb${index === 0 ? ' active' : ''}" onclick="selectProjectImage(${index})">
+          <img src="${src}" alt="${data.title} screenshot ${index + 1}" loading="lazy" decoding="async">
+        </div>
+      `).join('');
+
+      panel.classList.remove('project-detail-hidden');
+      window.scrollTo({ top: panel.offsetTop - 120, behavior: 'smooth' });
+    }
+
+    function selectProjectImage(index) {
+      const panel = document.getElementById('projectDetailsPanel');
+      if (!panel || panel.classList.contains('project-detail-hidden')) return;
+      const imgs = panel.querySelectorAll('.gallery-thumb img');
+      const src = imgs[index]?.src;
+      if (!src) return;
+      document.getElementById('detailMainImg').src = src;
+      panel.querySelectorAll('.gallery-thumb').forEach((thumb, thumbIndex) => {
+        thumb.classList.toggle('active', thumbIndex === index);
+      });
+    }
+
+    function hideProjectDetails(scrollTarget = 'projects') {
+      document.querySelectorAll('section, footer, .section-divider').forEach(el => el.classList.remove('page-hidden'));
+      const panel = document.getElementById('projectDetailsPanel');
+      panel.classList.add('project-detail-hidden');
+      document.getElementById('detailMainImg').src = '';
+      if (!scrollTarget || scrollTarget === 'top') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      const targetSection = document.getElementById(scrollTarget);
+      if (targetSection) {
+        window.scrollTo({ top: targetSection.offsetTop - 80, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
     function submitForm() {
       const n = document.getElementById('cName').value.trim();
       const e = document.getElementById('cEmail').value.trim();
@@ -1405,6 +1812,37 @@
         if (a.getAttribute('href') === '#' + current) a.style.color = 'var(--accent-3)';
       });
     }, { passive: true });
+
+    function handleHashNavigation() {
+      const hash = window.location.hash || '';
+      if (hash === '' || hash === '#') {
+        hideProjectDetails('top');
+      } else {
+        hideProjectDetails(hash.replace('#', ''));
+      }
+    }
+
+    document.querySelectorAll('.nav-links a, .footer-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        const hash = link.getAttribute('href') || '';
+        if (!hash.startsWith('#')) return;
+        if (hash === '#' || hash === '') return;
+        hideProjectDetails(hash.replace('#', ''));
+      });
+    });
+
+    const navLogo = document.querySelector('.nav-logo');
+    if (navLogo) {
+      navLogo.addEventListener('click', () => {
+        if (window.location.hash) {
+          window.history.pushState(null, '', window.location.pathname);
+        }
+        hideProjectDetails('top');
+      });
+    }
+
+    window.addEventListener('hashchange', handleHashNavigation);
+    window.addEventListener('popstate', handleHashNavigation);
   </script>
   <!-- EmailJS SDK v4 - using ES module for better compatibility -->
   <script type="importmap">
