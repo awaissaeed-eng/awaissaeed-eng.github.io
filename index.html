@@ -1359,7 +1359,7 @@
           <div class="project-thumb project-thumb-4">🎮</div>
           <div class="project-body">
             <div class="live-dot" style="color:#a78bfa;background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.3)">FYP</div>
-            <h3 class="project-title">Voice Recognition Gaming System</h3>
+            <h3 class="project-title">Gaming Through Voice Recognition System</h3>
             <p class="project-desc">Final Year Project — an AI-powered voice-controlled gaming system using real-time speech recognition and command mapping.</p>
             <div class="project-stack"><span class="stack-tag">Python</span><span class="stack-tag">Speech Recognition</span><span class="stack-tag">AI/ML</span><span class="stack-tag">Flask</span></div>
             <div class="project-card-footer">
@@ -1377,7 +1377,7 @@
         <div class="section-label" style="margin-bottom:0.75rem">Project Details</div>
         <h2 class="section-title" id="detailTitle"></h2>
       </div>
-      <a href="#projects" onclick="hideProjectDetails(); return false;">← Back to Projects</a>
+      <a href="#projects">← Back to Projects</a>
     </div>
     <div class="project-detail-top">
       <div>
@@ -1769,7 +1769,7 @@
           'Offline-first architecture'
         ],
         images: [
-          './media/gaming-login1.jpeg',
+          './media/gaming-Login1.jpeg',
           './media/gaming-Signup2.jpeg',
           './media/gaming-Startup3.jpeg',
           './media/gaming-Reset%20Password4.jpeg',
@@ -1796,9 +1796,13 @@
       document.head.appendChild(link);
     }
 
-    function showProjectDetails(key) {
+    function showProjectDetails(key, options = { pushState: true }) {
       const data = projectDetails[key];
       if (!data) return;
+
+      if (options.pushState) {
+        window.history.pushState({ project: key }, '', `#${key}`);
+      }
 
       document.querySelectorAll('section, footer, .section-divider').forEach(el => el.classList.add('page-hidden'));
       const panel = document.getElementById('projectDetailsPanel');
@@ -1872,11 +1876,14 @@
       });
     }
 
-    function hideProjectDetails(scrollTarget = 'projects') {
+    function hideProjectDetails(scrollTarget = 'projects', isHistoryNavigation = false) {
       document.querySelectorAll('section, footer, .section-divider').forEach(el => el.classList.remove('page-hidden'));
       const panel = document.getElementById('projectDetailsPanel');
       panel.classList.add('project-detail-hidden');
       document.getElementById('detailMainImg').src = '';
+      if (!isHistoryNavigation && window.location.hash) {
+        window.history.pushState(null, '', window.location.pathname);
+      }
       if (!scrollTarget || scrollTarget === 'top') {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
@@ -1946,23 +1953,23 @@
       });
     }, { passive: true });
 
-    function handleHashNavigation() {
+    function navigateToHash(isHistoryNavigation = false) {
       const hash = window.location.hash || '';
       if (hash === '' || hash === '#') {
-        hideProjectDetails('top');
-      } else {
-        hideProjectDetails(hash.replace('#', ''));
+        hideProjectDetails('top', isHistoryNavigation);
+        return;
       }
+      const key = hash.replace('#', '');
+      if (projectDetails[key]) {
+        showProjectDetails(key, { pushState: false });
+        return;
+      }
+      if (key === 'projects' || document.getElementById(key)) {
+        hideProjectDetails(key === 'projects' ? 'projects' : key, isHistoryNavigation);
+        return;
+      }
+      hideProjectDetails('top', isHistoryNavigation);
     }
-
-    document.querySelectorAll('.nav-links a, .footer-links a').forEach(link => {
-      link.addEventListener('click', () => {
-        const hash = link.getAttribute('href') || '';
-        if (!hash.startsWith('#')) return;
-        if (hash === '#' || hash === '') return;
-        hideProjectDetails(hash.replace('#', ''));
-      });
-    });
 
     const navLogo = document.querySelector('.nav-logo');
     if (navLogo) {
@@ -1970,12 +1977,13 @@
         if (window.location.hash) {
           window.history.pushState(null, '', window.location.pathname);
         }
-        hideProjectDetails('top');
+        hideProjectDetails('top', false);
       });
     }
 
-    window.addEventListener('hashchange', handleHashNavigation);
-    window.addEventListener('popstate', handleHashNavigation);
+    window.addEventListener('hashchange', () => navigateToHash(true));
+    window.addEventListener('popstate', () => navigateToHash(true));
+    navigateToHash();
   </script>
   <!-- EmailJS SDK v4 - using ES module for better compatibility -->
   <script type="importmap">
